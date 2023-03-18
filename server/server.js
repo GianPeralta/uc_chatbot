@@ -3,10 +3,6 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { Configuration, OpenAIApi } from 'openai';
 
-
-const MODEL_ENGINE = 'gpt-3.5-turbo';
-//const COMPLETIONS_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
-
 dotenv.config();
 
 const configuration = new Configuration({
@@ -21,7 +17,7 @@ app.use(express.json());
 
 app.get('/', async (req, res) => {
     res.status(200).send({
-        message: 'Hello from Codex',
+        message: 'Nothing to see here',
     })
 });
 
@@ -30,7 +26,7 @@ app.post('/', async (req, res) => {
         var prompt = req.body.prompt;
         
         const response = await openai.createChatCompletion({
-            model: MODEL_ENGINE,
+            model: 'gpt-3.5-turbo',
             messages: [{role: "user", content: prompt}],
             temperature: 0,
             max_tokens: 500,
