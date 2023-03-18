@@ -5,7 +5,7 @@ import { Configuration, OpenAIApi } from 'openai';
 
 
 const MODEL_ENGINE = 'gpt-3.5-turbo';
-const COMPLETIONS_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
+//const COMPLETIONS_ENDPOINT = 'https://api.openai.com/v1/chat/completions';
 
 dotenv.config();
 
@@ -36,9 +36,8 @@ app.post('/', async (req, res) => {
             max_tokens: 500,
         })
      
-        console.log(response);
         res.status(200).send({
-            bot: response.data.choices[0].message.content
+            bot: response.config
         })
     } catch(error) {
         console.log(error);

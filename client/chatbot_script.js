@@ -111,7 +111,7 @@ async function sendMessage(event) {
       
     });
     */
-    const response  = await fetch('http://localhost:5000', {
+    const response  = await fetch('https://uc-chatbot-v2.onrender.com', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -125,8 +125,8 @@ async function sendMessage(event) {
     console.log(data);
     if (response.ok) {
       //const botMessage = data.choices[0].message.content.trim();
-      const botMessage = data.bot;
-      addMessageToChat(botMessage);
+      //const botMessage = data.bot.trim();
+      //addMessageToChat(botMessage);
       //conversationHistory = `${conversationHistory}${userMessage}\nBot:${botMessage}\n`;
     } else {
       console.error(data);
