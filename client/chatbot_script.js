@@ -122,11 +122,11 @@ async function sendMessage(event) {
       })
 
     const data = await response.json();
-    console.log(data);
+
     if (response.ok) {
       //const botMessage = data.choices[0].message.content.trim();
-      //const botMessage = data.bot.trim();
-      //addMessageToChat(botMessage);
+      const botMessage = data.bot.trim();
+      addMessageToChat(botMessage);
       //conversationHistory = `${conversationHistory}${userMessage}\nBot:${botMessage}\n`;
     } else {
       console.error(data);
