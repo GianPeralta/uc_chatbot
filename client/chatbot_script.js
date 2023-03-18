@@ -88,7 +88,7 @@ async function sendMessage(event) {
                 Bot: You can send a form to reset your UC App password in this form: https://bit.ly/reset-ucapp_password. \n
                 
                 User: I forgot my canvas password or email. How do I update or reset my Canvas or UC Portal password and email?\n
-                Bot: Please proceed to MIS for further assistance on updating your Canvas or UC Portal email or password.\n`;
+                Bot: Please proceed to MIS for further assistance on updating or resetting your Canvas or UC Portal email or password.\n`;
   const prompt = `${init}\nUser:${userMessage}\nBot:`;
 
   
