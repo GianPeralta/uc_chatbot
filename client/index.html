@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Website kuno</title>
+    <link rel="stylesheet" href="chatbot_styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div id="dummy-text">Insert Website here</div>
+    </div>
+    <div id="chatbot-container">
+      <button id="chatbot-toggle"><img src="img_/jaguar_bot.png" width="40px;" height="40px;" style="padding-right: 15px;"alt="buttonpng"/><span style="position: absolute; bottom: 49px; right: 5px;">&#x1F4AC;</span></button>
+      <div id="chatbot">
+        <div class="header">
+          <span>Jaguar | The UC Chatbot powered by OpenAI</span>
+          <button class="close-btn" >&mdash;</button>
+        </div>
+        <div class="content" id="chat-output"></div>
+        <form class="form" onsubmit="sendMessage(event)">
+          <input type="text" id="user-input" autocomplete="off" placeholder="Ask Jaguar...">
+          <button type="submit" id="chat-submit">Send</button>
+        </form>
+      </div>
+    </div>
+    <script src="chatbot_script.js"></script>
+  </body>
+</html>
