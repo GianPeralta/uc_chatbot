@@ -128,9 +128,11 @@ async function sendMessage(event) {
       //conversationHistory = `${conversationHistory}${userMessage}\nBot:${botMessage}\n`;
     } else {
       console.error(data);
+      addMessageToChat(data);
     }
   } catch (error) {
     console.error(error);
+    addMessageToChat(error);
   }
   
 }
