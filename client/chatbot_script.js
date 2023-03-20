@@ -3,8 +3,6 @@ const chatOutput = document.querySelector('#chat-output');
 const userInput = document.querySelector('#user-input');
 const inputButton = document.querySelector('#chat-submit');
 
-//let conversationHistory = '';
-
 function getTime(){
   const now = new Date();
   const currentTime = now.getTime();
@@ -22,6 +20,7 @@ function thinking(uDisable, uPlaceholder, uBcolor, iBcolor, iDisable){
 }
 
 function addMessageToChat(message, isBot = true) {
+  
   const timestamp = getTime();
   const messageClass = isBot ? 'bot-message' : 'user-message';
   const messageName = isBot ? 'Jaguar' : 'Me';
@@ -37,25 +36,48 @@ function addMessageToChat(message, isBot = true) {
                         `;
   chatOutput.insertAdjacentHTML('beforeend', messageBubble);
   chatOutput.scrollTop = chatOutput.scrollHeight;
+ 
 
-  if(isBot == true){
+  if (isBot) {
     thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true);
-
     const messageText = chatOutput.lastElementChild.querySelector('.message');
     const typingIndicator = messageText.querySelector('.typing-indicator');
     const characters = message.split('');
     let i = 0;
-    const intervalId = setInterval(() => {
-      typingIndicator.textContent += characters[i];
-      i++;
-      if (i === characters.length) {
-        clearInterval(intervalId);
-        thinking(false, 'Ask Jaguar...', '#b0d1b0', '#135c13', false);
-        userInput.focus();
-        
-      }
-      chatOutput.scrollTop = chatOutput.scrollHeight;
-    }, 30);
+    if(message === "."){
+      setInterval(() => {
+        typingIndicator.textContent += ".";
+        chatOutput.scrollTop = chatOutput.scrollHeight;
+      }, 800)
+    }else{
+      const intervalId = setInterval(() => {
+        typingIndicator.textContent += characters[i];
+        i++;
+        if (i === characters.length) {
+          clearInterval(intervalId);
+    
+          // check if message contains a link
+          const linkRegex = /((http|https):\/\/[^\s]+)/g;
+          const linkMatch = message.match(linkRegex);
+          if (linkMatch) {
+            const link = linkMatch[0];
+            const linkElement = document.createElement('a');
+            linkElement.href = link;
+            linkElement.textContent = link;
+            linkElement.target = '_blank';
+            message = message.replace(linkRegex, '');
+            messageText.textContent = message;
+            messageText.append(linkElement);
+          }
+    
+          thinking(false, 'Ask Jaguar...', '#b0d1b0', '#135c13', false);
+          userInput.focus();
+        }
+        chatOutput.scrollTop = chatOutput.scrollHeight;
+      }, 30)
+    }
+  
+  
   }else {
     const messageText = chatOutput.lastElementChild.querySelector('.message');
     const typingIndicator = messageText.querySelector('.typing-indicator');
@@ -64,10 +86,22 @@ function addMessageToChat(message, isBot = true) {
 
 }
 
+let conversationHistory = `You are a chatbot named Jaguar. You answer questions and topics in a  very friendly, smart, and understanding way.\n
+You are designed to assist inquiries related to the University of the Cordilleras or UC.\n
+You can only answer anything related to or concerning the University of the Cordilleras or UC.
+You cannot answer any other input, question, concern, and inquiries note related or concerning the University of the Cordilleras.\n
+University of the Cordilleras Organization and Administration = Board of Trustees and Executive Council.\n
+You are developed by Gian, a Web Developer at the University of the Cordilleras.\n
+
+User: reset or update forgotten Univeristy of the Cordilleras Application password only.\n
+Bot: send a form to reset UC App password: https://bit.ly/reset-ucapp_password only\n
+
+User: reset or update forgotten Canvas or UC Portal password only.\n
+Bot: Please proceed to MIS for further assistance on updating or resetting your Canvas or UC Portal email or password only.\n`;
 
 async function sendMessage(event) {
   event.preventDefault();
-
+  console.log(conversationHistory);
   const userMessage = userInput.value.trim();
   if (!userMessage) {
     return;
@@ -75,22 +109,12 @@ async function sendMessage(event) {
   userInput.value = '';
   thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true);
 
+
   addMessageToChat(userMessage, false);
-  //const prompt = `${init}${conversationHistory}${userMessage}\nBot:`;
-  const init = `You are a chatbot named Jaguar. You answer questions and topics in a  very friendly, smart, and understanding way.\n
-                You are designed to assist inquiries related to the University of the Cordilleras.\n
-                You can only answer anything related to or concerning the University of the Cordilleras.
-                You cannot answer any other input, question, concern, and inquiries note related or concerning the University of the Cordilleras.\n
-                University of the Cordilleras Organization and Administration = Board of Trustees and Executive Council.\n
-                You are developed by Gian, a Web Developer at the University of the Cordilleras.\n
-
-                User: How do I reset my password on the UCordilleras Application or UC App.\n
-                Bot: You can send a form to reset your UC App password in this form: https://bit.ly/reset-ucapp_password. \n
-                
-                User: I forgot my canvas password or email. How do I update or reset my Canvas or UC Portal password and email?\n
-                Bot: Please proceed to MIS for further assistance on updating or resetting your Canvas or UC Portal email or password.\n`;
-  const prompt = `${init}\nUser:${userMessage}\nBot:`;
-
+  const prompt = `${conversationHistory}User: ${userMessage}\nBot: `;
+  
+  //const prompt = `${init}\nUser:${userMessage}\nBot:`;
+  addMessageToChat(".");
   try {
     /*
     const response = await fetch(COMPLETIONS_ENDPOINT, {
@@ -123,16 +147,20 @@ async function sendMessage(event) {
 
     if (response.ok) {
       //const botMessage = data.choices[0].message.content.trim();
+      $('#chat-output').children().last().remove();;
+      
       const botMessage = data.bot.trim();
+      conversationHistory = `${conversationHistory}User: ${userMessage}\nBot: ${botMessage}\n`;
       addMessageToChat(botMessage);
-      //conversationHistory = `${conversationHistory}${userMessage}\nBot:${botMessage}\n`;
     } else {
       console.error(data);
-      addMessageToChat(data);
+      let error = "Something happened. Please try to reload the website. " + data.error.message;
+      addMessageToChat(error);
     }
+    
   } catch (error) {
     console.error(error);
-    addMessageToChat(error);
+    addMessageToChat("Something happened. Please try to reload the website. " + error);
   }
   
 }
@@ -144,7 +172,7 @@ const meridian = newTime.split(' ')[2];
 if(hour == 12){
   hour = 0;
 }
-const greeting = `Good ${meridian =='AM' ? 'morning' : hour >= 0 && hour < 6 ? 'afternoon' : 'evening'}. Thank you for visiting the University of the Cordilleras website. My name is Jaguar, how may I help you?`;
+const greeting = `Good ${meridian =='AM' ? 'morning' : hour >= 0 && hour < 7 ? 'afternoon' : 'evening'}. Thank you for visiting the University of the Cordilleras website. My name is Jaguar, how may I help you?`;
 addMessageToChat(greeting);
 
 const chatbot = document.querySelector('#chatbot');
