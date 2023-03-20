@@ -46,6 +46,9 @@ function addMessageToChat(message, isBot = true) {
     let i = 0;
     if(message === "."){
       setInterval(() => {
+        if(typingIndicator.textContent == "..."){
+          typingIndicator.textContent = '';
+        }
         typingIndicator.textContent += ".";
         chatOutput.scrollTop = chatOutput.scrollHeight;
       }, 800)
@@ -76,8 +79,6 @@ function addMessageToChat(message, isBot = true) {
         chatOutput.scrollTop = chatOutput.scrollHeight;
       }, 30)
     }
-  
-  
   }else {
     const messageText = chatOutput.lastElementChild.querySelector('.message');
     const typingIndicator = messageText.querySelector('.typing-indicator');
