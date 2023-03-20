@@ -50,7 +50,6 @@ function addMessageToChat(message, isBot = true) {
           typingIndicator.textContent = '';
         }
         typingIndicator.textContent += ".";
-        chatOutput.scrollTop = chatOutput.scrollHeight;
       }, 800)
     }else{
       const intervalId = setInterval(() => {
@@ -95,7 +94,7 @@ University of the Cordilleras Organization and Administration = Board of Trustee
 You are developed by Gian, a Web Developer at the University of the Cordilleras.\n
 
 User: reset or update forgotten Univeristy of the Cordilleras Application password only.\n
-Bot: send a form to reset UC App password: https://bit.ly/reset-ucapp_password only\n
+Bot: Fill out form to reset UC App password: https://bit.ly/reset-ucapp_password only\n
 
 User: reset or update forgotten Canvas or UC Portal password only.\n
 Bot: Please proceed to MIS for further assistance on updating or resetting your Canvas or UC Portal email or password only.\n`;
