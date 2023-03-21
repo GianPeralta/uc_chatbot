@@ -36,14 +36,12 @@ function addMessageToChat(message, isBot = true) {
                         `;
   chatOutput.insertAdjacentHTML('beforeend', messageBubble);
   chatOutput.scrollTop = chatOutput.scrollHeight;
- 
 
   if (isBot) {
     thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true);
     const messageText = chatOutput.lastElementChild.querySelector('.message');
     const typingIndicator = messageText.querySelector('.typing-indicator');
     const characters = message.split('');
-    let i = 0;
     if(message === "."){
       typingIndicator.textContent = message;
       setInterval(() => {
@@ -53,6 +51,7 @@ function addMessageToChat(message, isBot = true) {
         typingIndicator.textContent += ".";
       }, 800)
     }else{
+      let i = 0;
       const intervalId = setInterval(() => {
         typingIndicator.textContent += characters[i];
         i++;
@@ -68,9 +67,8 @@ function addMessageToChat(message, isBot = true) {
             linkElement.href = link;
             linkElement.textContent = link;
             linkElement.target = '_blank';
-            message = message.replace(linkRegex, '');
             messageText.textContent = message;
-            messageText.append(linkElement);
+            messageText.append(document.createElement("br"), document.createElement("br"), "Click here: ", linkElement);
           }
     
           thinking(false, 'Ask Jaguar...', '#b0d1b0', '#135c13', false);
@@ -87,22 +85,7 @@ function addMessageToChat(message, isBot = true) {
 
 }
 
-let conversationHistory = `You are a chatbot named Jaguar. You answer questions and topics in a  very friendly, smart, and understanding way.\n
-You are designed to assist inquiries related to the University of the Cordilleras or UC.\n
-You can only answer anything related to or concerning the University of the Cordilleras or UC.\n
-You cannot answer any other input, question, concern, and inquiries note related or concerning the University of the Cordilleras.\n
-University of the Cordilleras Organization and Administration = Board of Trustees and Executive Council.\n
-You are developed by Gian, a Web Developer at the University of the Cordilleras.\n
-You speak all languages. You will only speak with the user using their chosen language.\n
-
-User: reset or update forgotten Univeristy of the Cordilleras Application password only.\n
-Bot: Fill out form to reset UC App password: https://bit.ly/reset-ucapp_password only\n
-
-User: reset or update forgotten Canvas or UC Portal password only.\n
-Bot: Please proceed to MIS for further assistance on updating or resetting your Canvas or UC Portal email or password only.\n
-
-You would speak with the user using this language: \n`;
-
+let conversationHistory = `System: The AI Assistant, Jaguar, would speak with the user using this language: \n`;
 async function sendMessage(event) {
   event.preventDefault();
   console.log(conversationHistory);
@@ -115,9 +98,7 @@ async function sendMessage(event) {
 
 
   addMessageToChat(userMessage, false);
-  const prompt = `${conversationHistory}User: ${userMessage}\nBot: `;
-  
-  //const prompt = `${init}\nUser:${userMessage}\nBot:`;
+  const prompt = `${conversationHistory}User: ${userMessage}\nAssistant: `;
   addMessageToChat(".");
   try {
     /*
@@ -137,7 +118,7 @@ async function sendMessage(event) {
       
     });
     */
-    const response  = await fetch('https://uc-chatbot-v2.onrender.com', {
+    const response  = await fetch('http://localhost:5000', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -151,20 +132,22 @@ async function sendMessage(event) {
 
     if (response.ok) {
       //const botMessage = data.choices[0].message.content.trim();
-      $('#chat-output').children().last().remove();;
+      $('#chat-output').children().last().remove();
       
       const botMessage = data.bot.trim();
-      conversationHistory = `${conversationHistory}User: ${userMessage}\nBot: ${botMessage}\n`;
+      conversationHistory = `${conversationHistory}User: ${userMessage}\nAssistant: ${botMessage}\n`;
       addMessageToChat(botMessage);
     } else {
       console.error(data);
-      let error = "Something happened. Please try to reload the website. " + data.error.message;
+      $('#chat-output').children().last().remove();
+      let error = "I'm sorry. Something happened. Please try to reload the website. " + data.error.message;
       addMessageToChat(error);
     }
     
   } catch (error) {
     console.error(error);
-    addMessageToChat("Something happened. Please try to reload the website. " + error);
+    $('#chat-output').children().last().remove();
+    addMessageToChat("I'm sorry. Something happened. Please try to reload the website. " + error);
   }
   
 }
