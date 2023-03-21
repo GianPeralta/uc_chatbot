@@ -156,7 +156,7 @@ async function sendMessage(event) {
 }
 const suggestions = [
   "Change Jaguar's language",
-  "Reset my Password",
+  "Reset Password",
   "What is the tuition fee at UC?",
   "What are the requirements for applying to UC?",
 ];
