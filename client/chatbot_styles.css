@@ -12,7 +12,25 @@
     right: 20px;
     z-index: 9999;
   }
-
+  #suggestion-container {
+    display: flex;
+    justify-content: center;
+  }
+  #suggestion-container button:first-child {
+    margin-left: 5px;
+  }
+  #suggestion-container button {
+    height: 70px;
+    margin-right: 5px;
+    background-color: #b0d1b0;
+    border: 1px solid black;
+  }
+  #suggestion-container button:hover {
+    height: 70px;
+    margin-right: 5px;
+    background-color: rgb(2, 118, 2);
+    cursor: pointer;
+  }
   #chatbot-toggle {
     background-color: #1f7a1f;
     border: none;

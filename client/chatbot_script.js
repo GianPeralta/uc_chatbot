@@ -2,6 +2,7 @@
 const chatOutput = document.querySelector('#chat-output');
 const userInput = document.querySelector('#user-input');
 const inputButton = document.querySelector('#chat-submit');
+const suggestionContainer = document.getElementById("suggestion-container");
 
 function getTime(){
   const now = new Date();
@@ -11,12 +12,13 @@ function getTime(){
   return time;
 }
 
-function thinking(uDisable, uPlaceholder, uBcolor, iBcolor, iDisable){
+function thinking(uDisable, uPlaceholder, uBcolor, iBcolor, iDisable, sDisplay){
   userInput.disabled = uDisable;
   userInput.placeholder= uPlaceholder;
   userInput.style.backgroundColor = uBcolor;
   inputButton.style.backgroundColor = iBcolor;
   inputButton.disabled = iDisable;
+  suggestionContainer.style.display = sDisplay;
 }
 
 function addMessageToChat(message, isBot = true) {
@@ -36,9 +38,10 @@ function addMessageToChat(message, isBot = true) {
                         `;
   chatOutput.insertAdjacentHTML('beforeend', messageBubble);
   chatOutput.scrollTop = chatOutput.scrollHeight;
+ 
 
   if (isBot) {
-    thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true);
+    thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true, 'none');
     const messageText = chatOutput.lastElementChild.querySelector('.message');
     const typingIndicator = messageText.querySelector('.typing-indicator');
     const characters = message.split('');
@@ -57,21 +60,7 @@ function addMessageToChat(message, isBot = true) {
         i++;
         if (i === characters.length) {
           clearInterval(intervalId);
-    
-          // check if message contains a link
-          const linkRegex = /((http|https):\/\/[^\s]+)/g;
-          const linkMatch = message.match(linkRegex);
-          if (linkMatch) {
-            const link = linkMatch[0];
-            const linkElement = document.createElement('a');
-            linkElement.href = link;
-            linkElement.textContent = link;
-            linkElement.target = '_blank';
-            messageText.textContent = message;
-            messageText.append(document.createElement("br"), document.createElement("br"), "Click here: ", linkElement);
-          }
-    
-          thinking(false, 'Ask Jaguar...', '#b0d1b0', '#135c13', false);
+          thinking(false, 'Ask Jaguar...', '#b0d1b0', '#135c13', false, 'flex');
           userInput.focus();
         }
         chatOutput.scrollTop = chatOutput.scrollHeight;
@@ -85,7 +74,19 @@ function addMessageToChat(message, isBot = true) {
 
 }
 
-let conversationHistory = `System: The AI Assistant, Jaguar, would speak with the user using this language: \n`;
+let conversationHistory = `You are a chatbot named Jaguar. You answer questions and topics in a  very friendly, smart, and understanding way.\n
+You are designed to assist inquiries related to the University of the Cordilleras or UC.\n
+You can only answer anything related to or concerning the University of the Cordilleras or UC.\n
+You cannot answer any other input, question, concern, and inquiries note related or concerning the University of the Cordilleras.\n
+You are developed by Gian, a Web Developer at the University of the Cordilleras.\n
+You speak all languages.\n
+If the user chose to change your language, continue to answer the user using the different chosen language and not English or any other language.
+The current president is Dr. Nancy Flores.\n
+
+Updating the UC Portal and Canvas password can only be done by proceeding to the MIS department.\n
+
+Updating the UC App password can only be done filling out a form to reset UC App password: https://bit.ly/reset-ucapp_password only. \n`;
+
 async function sendMessage(event) {
   event.preventDefault();
   console.log(conversationHistory);
@@ -94,11 +95,13 @@ async function sendMessage(event) {
     return;
   }
   userInput.value = '';
-  thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true);
+  thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true, 'none');
 
 
   addMessageToChat(userMessage, false);
-  const prompt = `${conversationHistory}User: ${userMessage}\nAssistant: `;
+  const prompt = `${conversationHistory}user: ${userMessage}\nbot: `;
+  
+  //const prompt = `${init}\nUser:${userMessage}\nBot:`;
   addMessageToChat(".");
   try {
     /*
@@ -118,7 +121,7 @@ async function sendMessage(event) {
       
     });
     */
-    const response  = await fetch('https://uc-chatbot-v2.onrender.com', {
+    const response  = await fetch('http://localhost:5000', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -135,22 +138,39 @@ async function sendMessage(event) {
       $('#chat-output').children().last().remove();
       
       const botMessage = data.bot.trim();
-      conversationHistory = `${conversationHistory}User: ${userMessage}\nAssistant: ${botMessage}\n`;
+      conversationHistory = `${conversationHistory}user: ${userMessage}\nbot: ${botMessage}\n`;
       addMessageToChat(botMessage);
     } else {
       console.error(data);
       $('#chat-output').children().last().remove();
-      let error = "I'm sorry. Something happened. Please try to reload the website. " + data.error.message;
+      let error = "Something happened. Please try to reload the website. " + data.error.message;
       addMessageToChat(error);
     }
     
   } catch (error) {
     console.error(error);
     $('#chat-output').children().last().remove();
-    addMessageToChat("I'm sorry. Something happened. Please try to reload the website. " + error);
+    addMessageToChat("Something happened. Please try to reload the website. " + error);
   }
   
 }
+const suggestions = [
+  "Change Jaguar's language",
+  "Reset my Password",
+  "What is the tuition fee at UC?",
+  "What are the requirements for applying to UC?",
+];
+
+suggestionContainer.innerHTML = "";
+suggestions.forEach((suggestion) => {
+  const suggestionButton = document.createElement("button");
+  suggestionButton.textContent = suggestion;
+  suggestionButton.addEventListener("click", () => {
+    userInput.value = suggestion;
+    sendMessage(event);
+  });
+  suggestionContainer.appendChild(suggestionButton);
+});
 
 const currentTime = getTime();
 const newTime = currentTime.replace(':', ' ');
@@ -159,7 +179,7 @@ const meridian = newTime.split(' ')[2];
 if(hour == 12){
   hour = 0;
 }
-const greeting = `Good ${meridian =='AM' ? 'morning' : hour >= 0 && hour < 7 ? 'afternoon' : 'evening'}. Thank you for visiting the University of the Cordilleras website. Which language would you like me to use?`;
+const greeting = `Good ${meridian =='AM' ? 'morning' : hour >= 0 && hour < 7 ? 'afternoon' : 'evening'}. Thank you for visiting the University of the Cordilleras website. How may I help you?`;
 addMessageToChat(greeting);
 
 const chatbot = document.querySelector('#chatbot');
@@ -173,3 +193,4 @@ $('.header').click(function(){
   $(chatbotToggle).show(950);
   $(chatbotToggle).find('span').show();
 });
+
