@@ -121,7 +121,7 @@ async function sendMessage(event) {
       
     });
     */
-    const response  = await fetch('http://localhost:5000', {
+    const response  = await fetch('https://uc-chatbot-v2.onrender.com', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
