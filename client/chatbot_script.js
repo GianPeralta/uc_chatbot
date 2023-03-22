@@ -22,7 +22,6 @@ function thinking(uDisable, uPlaceholder, uBcolor, iBcolor, iDisable, sDisplay){
 }
 
 function addMessageToChat(message, isBot = true) {
-  
   const timestamp = getTime();
   const messageClass = isBot ? 'bot-message' : 'user-message';
   const messageName = isBot ? 'Jaguar' : 'Me';
@@ -38,7 +37,6 @@ function addMessageToChat(message, isBot = true) {
                         `;
   chatOutput.insertAdjacentHTML('beforeend', messageBubble);
   chatOutput.scrollTop = chatOutput.scrollHeight;
- 
 
   if (isBot) {
     thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true, 'none');
@@ -74,13 +72,13 @@ function addMessageToChat(message, isBot = true) {
 
 }
 
-let conversationHistory = `You are a chatbot named Jaguar. You answer questions and topics in a  very friendly, smart, and understanding way.\n
-You are designed to assist inquiries related to the University of the Cordilleras or UC.\n
-You can only answer anything related to or concerning the University of the Cordilleras or UC.\n
-You cannot answer any other input, question, concern, and inquiries note related or concerning the University of the Cordilleras.\n
-You are developed by Gian, a Web Developer at the University of the Cordilleras.\n
-You speak all languages.\n
-If the user chose to change your language, continue to answer the user using the different chosen language and not English or any other language.
+let conversationHistory = `The following is a conversation with an AI assistant. The AI assistant is named Jaguar. \n
+Jaguar answer questions and topics in a  very friendly, smart, and understanding way. Answer as concisely as possible.\n
+Jaguar is to designed to assist inquiries related to the University of the Cordilleras or UC.\n
+Jaguar only answers anything related to or concerning the University of the Cordilleras or UC.\n
+Jaguar cannot answer any other input, question, concern, and inquiries not related or concerning the University of the Cordilleras.\n
+Jaguar is developed by Gian, a Web Developer at the University of the Cordilleras.\n
+Jaguar speak all languages. Jaguar's language can be changed.\n
 The current president is Dr. Nancy Flores.\n
 
 Updating the UC Portal or Canvas password can only be done by proceeding to the MIS department.\n
@@ -97,9 +95,8 @@ async function sendMessage(event) {
   userInput.value = '';
   thinking(true, 'Jaguar is thinking...', '#a9a9a9', 'rgb(132 133 132)', true, 'none');
 
-
   addMessageToChat(userMessage, false);
-  const prompt = `${conversationHistory}user: ${userMessage}\nbot: `;
+  const prompt = `${conversationHistory}User: ${userMessage}\nJaguar: `;
   
   //const prompt = `${init}\nUser:${userMessage}\nBot:`;
   addMessageToChat(".");
@@ -121,7 +118,7 @@ async function sendMessage(event) {
       
     });
     */
-    const response  = await fetch('https://uc-chatbot-v2.onrender.com', {
+    const response  = await fetch('http://localhost:5000', {
         method: 'POST',
         headers: {
           'Content-type': 'application/json'
@@ -138,7 +135,7 @@ async function sendMessage(event) {
       $('#chat-output').children().last().remove();
       
       const botMessage = data.bot.trim();
-      conversationHistory = `${conversationHistory}user: ${userMessage}\nbot: ${botMessage}\n`;
+      conversationHistory = `${conversationHistory}User: ${userMessage}\nJaguar: ${botMessage}\n`;
       addMessageToChat(botMessage);
     } else {
       console.error(data);
